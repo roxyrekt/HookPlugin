@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HookPlugin", "RoxyHook\HookPlugin.csproj", "{13CA1836-0029-4ED0-BDB8-AB1B0A992A30}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13CA1836-0029-4ED0-BDB8-AB1B0A992A30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13CA1836-0029-4ED0-BDB8-AB1B0A992A30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13CA1836-0029-4ED0-BDB8-AB1B0A992A30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13CA1836-0029-4ED0-BDB8-AB1B0A992A30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D9640B64-617F-4E4A-9D87-5F3210C819EC}
+	EndGlobalSection
+EndGlobal
