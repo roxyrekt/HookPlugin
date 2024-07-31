@@ -24,7 +24,7 @@ namespace HookPlugin
 	public class HookPlugin : BasePlugin, IPluginConfig<HookPluginConfig>
 	{
 		public override string ModuleName => "HookPlugin";
-		public override string ModuleVersion => "1.0.0";
+		public override string ModuleVersion => "1.0.1";
 		public override string ModuleAuthor => "Roxy";
 
 
@@ -52,14 +52,15 @@ namespace HookPlugin
 					if (@event == null)
 						return HookResult.Continue;
 
-					PlayersGrapples
-						.ToList()
-						.ForEach(x =>
-						{
-							x.Value.Remove();
-						});
+					// HER YENI ROUND ZATEN BEAMLER SIFIRLAINYOR BU YUZDEN GEREKSIZ
+					//PlayersGrapples
+					//	.ToList()
+					//	.ForEach(x =>
+					//	{
+					//		x.Value.Remove();
+					//	});
 
-					PlayersGrapples.Clear();
+					PlayersGrapples?.Clear();
 
 					if (Config.RoundBasiHooklarAcilsin)
 					{
@@ -172,7 +173,7 @@ namespace HookPlugin
 				return;
 			}
 
-			if (AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
 			{
 				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
@@ -208,7 +209,7 @@ namespace HookPlugin
 				return;
 			}
 
-			if (AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
 			{
 				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
