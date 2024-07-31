@@ -189,6 +189,58 @@ namespace HookPlugin
 			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hookun hızını {ChatColors.Gold}{x}{ChatColors.Default} olarak değiştirdi.");
 		}
 
+		[ConsoleCommand("ha")]
+		[ConsoleCommand("hookac")]
+		public void HookAc(CCSPlayerController? player, CommandInfo info)
+		{
+			var callerName = player == null ? "Konsol" : player.PlayerName;
+
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			{
+				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				return;
+			}
+
+			HookEnabledForT = true;
+			HookEnabledForCt = true;
+
+			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku açtı.");
+		}
+
+		[ConsoleCommand("hat")]
+		[ConsoleCommand("hookact")]
+		public void HookAcT(CCSPlayerController? player, CommandInfo info)
+		{
+			var callerName = player == null ? "Konsol" : player.PlayerName;
+
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			{
+				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				return;
+			}
+
+			HookEnabledForT = true;
+
+			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku t takımına açtı.");
+		}
+
+		[ConsoleCommand("hact")]
+		[ConsoleCommand("hookacct")]
+		public void HookAcCt(CCSPlayerController? player, CommandInfo info)
+		{
+			var callerName = player == null ? "Konsol" : player.PlayerName;
+
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			{
+				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				return;
+			}
+
+			HookEnabledForCt = true;
+
+			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku ct takımına açtı.");
+		}
+
 		[ConsoleCommand("hk")]
 		[ConsoleCommand("hookkapat")]
 		[ConsoleCommand("hookkapa")]
