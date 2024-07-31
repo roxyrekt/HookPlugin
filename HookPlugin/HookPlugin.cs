@@ -38,6 +38,7 @@ namespace HookPlugin
 		}
 
 		private static Dictionary<ulong, CEnvBeam> PlayersGrapples = new();
+		private static List<ulong> HasHookPlayers = new();
 
 		private static bool HookEnabledForCt = true;
 		private static bool HookEnabledForT = true;
@@ -102,7 +103,7 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
 			{
 				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
@@ -116,17 +117,17 @@ namespace HookPlugin
 			var team = player.Team;
 			if (team == CsTeam.Terrorist)
 			{
-				if (HookEnabledForCt == false)
+				if (HookEnabledForT == false)
 				{
-					player.PrintToChat($"{Config.Prefix} Hook ct takımına kapalı.");
+					player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook t takımına kapalı.");
 					return;
 				}
 			}
 			else if (team == CsTeam.CounterTerrorist)
 			{
-				if (HookEnabledForT == false)
+				if (HookEnabledForCt == false)
 				{
-					player.PrintToChat($"{Config.Prefix} Hook t takımına kapalı.");
+					player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook ct takımına kapalı.");
 					return;
 				}
 			}
@@ -143,7 +144,7 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
 			{
 				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
@@ -161,6 +162,77 @@ namespace HookPlugin
 			}
 		}
 
+
+		[ConsoleCommand("hookver")]
+		[CommandHelper(1, "<hedef>")]
+		public void HookVer(CCSPlayerController? player, CommandInfo info)
+		{
+			if (IsPlayerValid(player) == false)
+			{
+				return;
+			}
+
+			if (AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			{
+				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				return;
+			}
+
+			var target = info.GetArgTargetResult(1);
+
+			if (target == null)
+			{
+				player!.PrintToChat($"{Config.Prefix}{ChatColors.White} Hedef hatalı.");
+				return;
+			}
+			target
+				.ToList()
+				.ForEach(x =>
+				{
+					if (!HasHookPlayers.Contains(x.SteamID))
+					{
+						HasHookPlayers.Add(x.SteamID);
+					}
+					Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, {ChatColors.Yellow}{x.PlayerName}{ChatColors.White} adlı oyuncuya hook verdi.");
+				});
+
+		}
+
+		[ConsoleCommand("hookal")]
+		[ConsoleCommand("hooksil")]
+		[CommandHelper(1, "<hedef>")]
+		public void HookSil(CCSPlayerController? player, CommandInfo info)
+		{
+			if (IsPlayerValid(player) == false)
+			{
+				return;
+			}
+
+			if (AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			{
+				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				return;
+			}
+
+			var target = info.GetArgTargetResult(1);
+
+			if (target == null)
+			{
+				player!.PrintToChat($"{Config.Prefix}{ChatColors.White} Hedef hatalı.");
+				return;
+			}
+			target
+				.ToList()
+				.ForEach(x =>
+				{
+					if (HasHookPlayers.Contains(x.SteamID))
+					{
+						HasHookPlayers.RemoveAll(y => y == x.SteamID);
+					}
+					Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, {ChatColors.Yellow}{x.PlayerName}{ChatColors.White} adlı oyuncunun hookunu sildi.");
+				});
+
+		}
 
 		[ConsoleCommand("hookhiz")]
 		[ConsoleCommand("hhiz")]
@@ -324,20 +396,25 @@ namespace HookPlugin
 							continue;
 						}
 
+						if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+						{
+							continue;
+						}
+
 						var team = player.Team;
 						if (team == CsTeam.Terrorist)
 						{
-							if (HookEnabledForCt == false)
+							if (HookEnabledForT == false)
 							{
-								player.PrintToChat($"{Config.Prefix} Hook ct takımına kapalı.");
+								player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook t takımına kapalı.");
 								continue;
 							}
 						}
 						else if (team == CsTeam.CounterTerrorist)
 						{
-							if (HookEnabledForT == false)
+							if (HookEnabledForCt == false)
 							{
-								player.PrintToChat($"{Config.Prefix} Hook t takımına kapalı.");
+								player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook ct takımına kapalı.");
 								continue;
 							}
 						}
