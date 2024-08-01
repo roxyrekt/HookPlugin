@@ -5,26 +5,15 @@ using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Utils;
 using System.Drawing;
-using System;
-using System.Net.NetworkInformation;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 
 namespace HookPlugin
 {
-	public class HookPluginConfig : BasePluginConfig
-	{
-		public string Prefix { get; set; } = "{green}[Hook]";
-		public string HookYetkisi { get; set; } = "@css/ban";
-		public int HookVarsayilanHiz { get; set; } = 1500;
-		public int HookUzunlugu { get; set; } = 2500;
-		public bool RoundBasiHooklarAcilsin { get; set; } = true;
-		public string YetkinYokText { get; set; } = "Bu komutu kullanmak için yeterli yetkiniz yok!";
-	}
 
 	public class HookPlugin : BasePlugin, IPluginConfig<HookPluginConfig>
 	{
 		public override string ModuleName => "HookPlugin";
-		public override string ModuleVersion => "1.0.1";
+		public override string ModuleVersion => "1.0.2";
 		public override string ModuleAuthor => "Roxy";
 
 
@@ -45,6 +34,53 @@ namespace HookPlugin
 
 		public override void Load(bool hotReload)
 		{
+			AddCommand(Config.Commands.Hook1, "", HookOne);
+			AddCommand(Config.Commands.Hook0, "", HookZero);
+			foreach (var xC in Config.Commands.OpenHookForAll)
+			{
+				AddCommand(xC, "", HookAc);
+			}			
+
+			foreach (var xC in Config.Commands.OpenHookForT)
+			{
+				AddCommand(xC, "", HookAcT);
+			}	
+			
+			foreach (var xC in Config.Commands.OpenHookForCT)
+			{
+				AddCommand(xC, "", HookAcCt);
+			}			
+			
+			foreach (var xC in Config.Commands.DisableHookForAll)
+			{
+				AddCommand(xC, "", HookKapa);
+			}	
+			
+			foreach (var xC in Config.Commands.DisableHookForT)
+			{
+				AddCommand(xC, "", HookKapaT);
+			}			
+
+			foreach (var xC in Config.Commands.DisableHookForCT)
+			{
+				AddCommand(xC, "", HookKapaCT);
+			}			
+
+			foreach (var xC in Config.Commands.ChangeHookSpeed)
+			{
+				AddCommand(xC, "", HookHiz);
+			}
+
+			foreach (var xC in Config.Commands.GiveTempHook)
+			{
+				AddCommand(xC, "", HookVer);
+			}
+
+			foreach (var xC in Config.Commands.RemoveTempHook)
+			{
+				AddCommand(xC, "", HookSil);
+			}
+
 			RegisterEventHandler<EventRoundStart>((@event, _) =>
 			{
 				try
@@ -62,7 +98,7 @@ namespace HookPlugin
 
 					PlayersGrapples?.Clear();
 
-					if (Config.RoundBasiHooklarAcilsin)
+					if (Config.HookSettings.HookActiveResetOnRoundStart)
 					{
 						HookEnabledForCt = true;
 						HookEnabledForT = true;
@@ -96,7 +132,7 @@ namespace HookPlugin
 			base.Unload(hotReload);
 		}
 
-		[ConsoleCommand("hook1")]
+		// [ConsoleCommand("hook1")]
 		public void HookOne(CCSPlayerController? player, CommandInfo info)
 		{
 			if (IsPlayerValid(player) == false)
@@ -104,9 +140,10 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
@@ -120,7 +157,8 @@ namespace HookPlugin
 			{
 				if (HookEnabledForT == false)
 				{
-					player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook t takımına kapalı.");
+					player.PrintToChat(Config.Prefix + ChatColors.White + Localizer["HookIsDisabledForT"]);
+					// player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook t takımına kapalı.");
 					return;
 				}
 			}
@@ -128,7 +166,8 @@ namespace HookPlugin
 			{
 				if (HookEnabledForCt == false)
 				{
-					player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook ct takımına kapalı.");
+					player.PrintToChat(Config.Prefix + ChatColors.White + Localizer["HookIsDisabledForCT"]);
+					// player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook ct takımına kapalı.");
 					return;
 				}
 			}
@@ -137,7 +176,7 @@ namespace HookPlugin
 		}
 
 
-		[ConsoleCommand("hook0")]
+		// [ConsoleCommand("hook0")]
 		public void HookZero(CCSPlayerController? player, CommandInfo info)
 		{
 			if (IsPlayerValid(player) == false)
@@ -145,9 +184,10 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
@@ -164,8 +204,8 @@ namespace HookPlugin
 		}
 
 
-		[ConsoleCommand("hookver")]
-		[CommandHelper(1, "<hedef>")]
+		// [ConsoleCommand("hookver")]
+		[CommandHelper(1, "<target>")]
 		public void HookVer(CCSPlayerController? player, CommandInfo info)
 		{
 			if (IsPlayerValid(player) == false)
@@ -173,9 +213,10 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
@@ -183,7 +224,8 @@ namespace HookPlugin
 
 			if (target == null)
 			{
-				player!.PrintToChat($"{Config.Prefix}{ChatColors.White} Hedef hatalı.");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["TargetIsWrong"]);
+				// player!.PrintToChat($"{Config.Prefix}{ChatColors.White} Hedef hatalı.");
 				return;
 			}
 			target
@@ -194,14 +236,15 @@ namespace HookPlugin
 					{
 						HasHookPlayers.Add(x.SteamID);
 					}
-					Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, {ChatColors.Yellow}{x.PlayerName}{ChatColors.White} adlı oyuncuya hook verdi.");
+					Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["NamedAdminHookGave", player!.PlayerName, x.PlayerName]);
+					// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, {ChatColors.Yellow}{x.PlayerName}{ChatColors.White} adlı oyuncuya hook verdi.");
 				});
 
 		}
 
-		[ConsoleCommand("hookal")]
-		[ConsoleCommand("hooksil")]
-		[CommandHelper(1, "<hedef>")]
+		// [ConsoleCommand("hookal")]
+		// [ConsoleCommand("hooksil")]
+		[CommandHelper(1, "<target>")]
 		public void HookSil(CCSPlayerController? player, CommandInfo info)
 		{
 			if (IsPlayerValid(player) == false)
@@ -209,9 +252,10 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
@@ -219,7 +263,8 @@ namespace HookPlugin
 
 			if (target == null)
 			{
-				player!.PrintToChat($"{Config.Prefix}{ChatColors.White} Hedef hatalı.");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["TargetIsWrong"]);
+				// player!.PrintToChat($"{Config.Prefix}{ChatColors.White} Hedef hatalı.");
 				return;
 			}
 			target
@@ -230,14 +275,16 @@ namespace HookPlugin
 					{
 						HasHookPlayers.RemoveAll(y => y == x.SteamID);
 					}
-					Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, {ChatColors.Yellow}{x.PlayerName}{ChatColors.White} adlı oyuncunun hookunu sildi.");
+					Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["NamedAdminHookDelete", player!.PlayerName, x.PlayerName]);
+					// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, {ChatColors.Yellow}{x.PlayerName}{ChatColors.White} adlı oyuncunun hookunu sildi.");
 				});
 
 		}
 
-		[ConsoleCommand("hookhiz")]
-		[ConsoleCommand("hhiz")]
-		[ConsoleCommand("hspeed")]
+		//[ConsoleCommand("hookhiz")]
+		//[ConsoleCommand("hhiz")]
+		//[ConsoleCommand("hspeed")]
+		[CommandHelper(1, "<speed>")]
 		public void HookHiz(CCSPlayerController? player, CommandInfo info)
 		{
 			if (IsPlayerValid(player) == false)
@@ -245,126 +292,141 @@ namespace HookPlugin
 				return;
 			}
 
-			if (!AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (!AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			if (!int.TryParse(info.GetArg(1), out int x))
 			{
-				player!.PrintToChat($"{Config.Prefix} Hook hız değeri hatalı.");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["HookSpeedIsWrong"]);
+				// player!.PrintToChat($"{Config.Prefix} Hook hız değeri hatalı.");
 				return;
 			}
 
-			Config.HookVarsayilanHiz = x;
+			Config.HookSettings.HookDefaultSpeed = x;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hookun hızını {ChatColors.Gold}{x}{ChatColors.Default} olarak değiştirdi.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["NamedAdminChangedHookSpeed", player!.PlayerName, x]);
+			// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hookun hızını {ChatColors.Gold}{x}{ChatColors.Default} olarak değiştirdi.");
 		}
 
-		[ConsoleCommand("ha")]
-		[ConsoleCommand("hookac")]
+		//[ConsoleCommand("ha")]
+		//[ConsoleCommand("hookac")]
 		public void HookAc(CCSPlayerController? player, CommandInfo info)
 		{
 			var callerName = player == null ? "Konsol" : player.PlayerName;
 
-			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			HookEnabledForT = true;
 			HookEnabledForCt = true;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku açtı.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["OpenedHookForAll", player!.PlayerName]);
+			// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku açtı.");
 		}
 
-		[ConsoleCommand("hat")]
-		[ConsoleCommand("hookact")]
+		//[ConsoleCommand("hat")]
+		//[ConsoleCommand("hookact")]
 		public void HookAcT(CCSPlayerController? player, CommandInfo info)
 		{
 			var callerName = player == null ? "Konsol" : player.PlayerName;
 
-			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			HookEnabledForT = true;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku t takımına açtı.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["OpenedHookForT", player!.PlayerName]);
+			//Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku t takımına açtı.");
 		}
 
-		[ConsoleCommand("hact")]
-		[ConsoleCommand("hookacct")]
+		//[ConsoleCommand("hact")]
+		//[ConsoleCommand("hookacct")]
 		public void HookAcCt(CCSPlayerController? player, CommandInfo info)
 		{
 			var callerName = player == null ? "Konsol" : player.PlayerName;
 
-			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			HookEnabledForCt = true;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku ct takımına açtı.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["OpenedHookForCT", player!.PlayerName]);
+			// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku ct takımına açtı.");
 		}
 
-		[ConsoleCommand("hk")]
-		[ConsoleCommand("hookkapat")]
-		[ConsoleCommand("hookkapa")]
+		//[ConsoleCommand("hk")]
+		//[ConsoleCommand("hookkapat")]
+		//[ConsoleCommand("hookkapa")]
 		public void HookKapa(CCSPlayerController? player, CommandInfo info)
 		{
 			var callerName = player == null ? "Konsol" : player.PlayerName;
 
-			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			HookEnabledForT = false;
 			HookEnabledForCt = false;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku kapattı.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["DisabledHookForAll", player!.PlayerName]);
+			// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, hooku kapattı.");
 		}
 
-		[ConsoleCommand("hkt")]
-		[ConsoleCommand("hookkapatt")]
+		//[ConsoleCommand("hkt")]
+		//[ConsoleCommand("hookkapatt")]
 		public void HookKapaT(CCSPlayerController? player, CommandInfo info)
 		{
 			var callerName = player == null ? "Konsol" : player.PlayerName;
 
-			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			HookEnabledForT = false;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, t takımının hookunu kapattı.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["DisabledHookForT", player!.PlayerName]);
+			// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, t takımının hookunu kapattı.");
 		}
 
-		[ConsoleCommand("hkct")]
-		[ConsoleCommand("hookkapatct")]
+		//[ConsoleCommand("hkct")]
+		//[ConsoleCommand("hookkapatct")]
 		public void HookKapaCT(CCSPlayerController? player, CommandInfo info)
 		{
 			var callerName = player == null ? "Konsol" : player.PlayerName;
 
-			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+			if (player != null && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 			{
-				player.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
+				player!.PrintToChat(Config.Prefix + ChatColors.White + Localizer["NotEnoughPermission"]);
+				// player!.PrintToChat($"{Config.Prefix} {ChatColors.White}{Config.YetkinYokText}");
 				return;
 			}
 
 			HookEnabledForCt = false;
 
-			Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, ct takımının hookunu kapattı.");
+			Server.PrintToChatAll(Config.Prefix + ChatColors.White + Localizer["DisabledHookForCT", player!.PlayerName]);
+			// Server.PrintToChatAll($"{Config.Prefix} {ChatColors.Green}{player!.PlayerName}{ChatColors.White} isimli yetkili, ct takımının hookunu kapattı.");
 		}
 
 
@@ -397,7 +459,7 @@ namespace HookPlugin
 							continue;
 						}
 
-						if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookYetkisi))
+						if (!HasHookPlayers.Contains(player!.SteamID) && !AdminManager.PlayerHasPermissions(player, Config.HookSettings.HookPermission))
 						{
 							continue;
 						}
@@ -407,7 +469,8 @@ namespace HookPlugin
 						{
 							if (HookEnabledForT == false)
 							{
-								player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook t takımına kapalı.");
+								player.PrintToChat(Config.Prefix + ChatColors.White + Localizer["HookIsDisabledForT"]);
+								// player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook t takımına kapalı.");
 								continue;
 							}
 						}
@@ -415,7 +478,8 @@ namespace HookPlugin
 						{
 							if (HookEnabledForCt == false)
 							{
-								player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook ct takımına kapalı.");
+								player.PrintToChat(Config.Prefix + ChatColors.White + Localizer["HookIsDisabledForCT"]);
+								// player.PrintToChat($"{Config.Prefix}{ChatColors.White} Hook ct takımına kapalı.");
 								continue;
 							}
 						}
@@ -433,9 +497,9 @@ namespace HookPlugin
 						direction = new Vector(direction.X / distanceToTarget, direction.Y / distanceToTarget, direction.Z / distanceToTarget);
 
 						var newVelocity = new Vector(
-							direction.X * Config.HookVarsayilanHiz,
-							direction.Y * Config.HookVarsayilanHiz,
-							direction.Z * Config.HookVarsayilanHiz
+							direction.X * Config.HookSettings.HookDefaultSpeed,
+							direction.Y * Config.HookSettings.HookDefaultSpeed,
+							direction.Z * Config.HookSettings.HookDefaultSpeed
 						);
 
 						if (player.PlayerPawn.Value.AbsVelocity != null)
@@ -467,7 +531,7 @@ namespace HookPlugin
 			float x, y, z;
 			float playerX, playerY, playerZ;
 			double angleA, angleB, radianA, radianB;
-			double distance = Config.HookUzunlugu;
+			double distance = Config.HookSettings.HookLength;
 			float targetX, targetY, targetZ;
 			float angleDifference;
 

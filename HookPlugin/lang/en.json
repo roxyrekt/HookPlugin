@@ -1,0 +1,15 @@
+{
+    "NotEnoughPermission": "{white}You do not have enough permission to use this command!",
+    "HookIsDisabledForT": "{white}Hook is disabled for Terrorist team.",
+    "HookIsDisabledForCT": "{white}Hook is disabled for Counter-Terrorist team.",
+    "TargetIsWrong": "{white}Target is wrong.",
+    "NamedAdminHookGave": "{green}{0}{white} gave hook to player {blue}{1}{white}.",
+    "NamedAdminHookDelete": "{green}{0}{white} deleted hook from player {blue}{1}{white}.",
+    "HookSpeedIsWrong": "{white}Hook speed value is incorrect.",
+    "OpenedHookForAll": "{green}{0}{white} enabled hook for all.",
+    "OpenedHookForT": "{green}{0}{white} enabled hook for Terrorist team.",
+    "OpenedHookForCT": "{green}{0}{white} enabled hook for Counter-Terrorist team.",
+    "DisabledHookForAll": "{green}{0}{white} disabled hook for all.",
+    "DisabledHookForT": "{green}{0}{white} disabled hook for Terrorist team.",
+    "DisabledHookForCT": "{green}{0}{white} disabled hook for Counter-Terrorist team."
+}

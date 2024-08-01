@@ -1,0 +1,15 @@
+{
+    "NotEnoughPermission": "{white}Bu komutu kullanmak için yeterli yetkiniz yok!",
+    "HookIsDisabledForT": "{white}Hook t takımına kapalı.",
+    "HookIsDisabledForCT": "{white}Hook ct takımına kapalı.",
+    "TargetIsWrong": "{white}Hedef hatalı.",
+    "NamedAdminHookGave": "{green}{0}{white} isimli yetkili, {blue}{1}{white} adlı oyuncuya hook verdi.",
+    "NamedAdminHookDelete": "{green}{0}{white} isimli yetkili, {blue}{1}{white} adlı oyuncunun hookunu sildi.",
+    "HookSpeedIsWrong": "{white}Hook hız değeri hatalı.",
+    "OpenedHookForAll": "{green}{0}{white} isimli yetkili, hooku açtı.",
+    "OpenedHookForT": "{green}{0}{white} isimli yetkili, hooku t takımına açtı.",
+    "OpenedHookForCT": "{green}{0}{white} isimli yetkili, hooku ct takımına açtı.",
+    "DisabledHookForAll": "{green}{0}{white} isimli yetkili, hooku kapattı.",
+    "DisabledHookForT": "{green}{0}{white} isimli yetkili, t takımının hookunu kapattı.",
+    "DisabledHookForCT": "{green}{0}{white} isimli yetkili, ct takımının hookunu kapattı."
+}
