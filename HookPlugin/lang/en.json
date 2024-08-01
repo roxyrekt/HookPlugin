@@ -3,6 +3,7 @@
     "HookIsDisabledForT": "{white}Hook is disabled for Terrorist team.",
     "HookIsDisabledForCT": "{white}Hook is disabled for Counter-Terrorist team.",
     "TargetIsWrong": "{white}Target is wrong.",
+    "NamedAdminChangedHookSpeed": "{green}{0}{white} changed the hook speed to {yellow}{1}{white}.",
     "NamedAdminHookGave": "{green}{0}{white} gave hook to player {blue}{1}{white}.",
     "NamedAdminHookDelete": "{green}{0}{white} deleted hook from player {blue}{1}{white}.",
     "HookSpeedIsWrong": "{white}Hook speed value is incorrect.",
