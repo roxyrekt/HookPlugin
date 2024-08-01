@@ -152,6 +152,11 @@ namespace HookPlugin
 				return;
 			}
 
+			if (PlayersGrapples.TryGetValue(player.SteamID, out var laser))
+			{
+				return;
+			}
+
 			var team = player.Team;
 			if (team == CsTeam.Terrorist)
 			{
