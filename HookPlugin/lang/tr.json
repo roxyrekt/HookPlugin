@@ -3,6 +3,7 @@
     "HookIsDisabledForT": "{white}Hook t takımına kapalı.",
     "HookIsDisabledForCT": "{white}Hook ct takımına kapalı.",
     "TargetIsWrong": "{white}Hedef hatalı.",
+    "NamedAdminChangedHookSpeed": "{green}{0}{white} isimli yetkili, hookun hızını {yellow}{1}{white} olarak değiştirdi.",
     "NamedAdminHookGave": "{green}{0}{white} isimli yetkili, {blue}{1}{white} adlı oyuncuya hook verdi.",
     "NamedAdminHookDelete": "{green}{0}{white} isimli yetkili, {blue}{1}{white} adlı oyuncunun hookunu sildi.",
     "HookSpeedIsWrong": "{white}Hook hız değeri hatalı.",
