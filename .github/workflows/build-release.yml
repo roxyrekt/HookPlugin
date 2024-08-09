@@ -17,10 +17,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@main
+      uses: actions/checkout@v4
 
     - name: Install .NET SDK 8.0
-      uses: actions/setup-dotnet@main
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: '8.0.x'
 
@@ -28,27 +28,26 @@ jobs:
       run: dotnet restore HookPlugin.sln
 
     - name: Build Solution
-      run: |
-        dotnet build HookPlugin.sln --configuration Release
+      run: dotnet build HookPlugin.sln --configuration Release
 
     - name: Create ZIP file
       run: |
         cd HookPlugin
-        mkdir -p HookPlugin/addons/counterstrikesharp/plugins/HookPlugin
-        cp -r bin/Release/net8.0/* HookPlugin/addons/counterstrikesharp/plugins/HookPlugin
-        zip -r HookPlugin-${{ github.event.inputs.version }}.zip HookPlugin
-  
+        mkdir -p addons/counterstrikesharp/plugins/HookPlugin
+        cp -r bin/Release/net8.0/* addons/counterstrikesharp/plugins/HookPlugin
+        zip -r HookPlugin-${{ github.event.inputs.version }}.zip addons
+
     - name: Upload Release
-      uses: actions/upload-artifact@main
+      uses: actions/upload-artifact@v3
       with:
         name: release
-        path: HookPlugin
+        path: HookPlugin/HookPlugin-${{ github.event.inputs.version }}.zip
 
     - name: List contents of Release directory
       run: ls -la HookPlugin
 
     - name: Create Release
-      uses: actions/create-release@main
+      uses: actions/create-release@v1
       id: create_release
       with:
         tag_name: ${{ github.event.inputs.version }}
@@ -57,14 +56,14 @@ jobs:
         draft: false
         prerelease: false
       env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Release Asset
-      uses: actions/upload-release-asset@main
+      uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: HookPlugin/HookPlugin-${{ github.event.inputs.version }}.zip
         asset_name: HookPlugin-${{ github.event.inputs.version }}.zip
         asset_content_type: application/zip
       env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
