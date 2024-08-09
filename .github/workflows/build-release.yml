@@ -1,0 +1,71 @@
+name: Build & Upload Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version Number (ex. 1.0.0)."
+        default: "1.0.0"
+      description:
+        description: "Describe this release."
+        default: "CHANGEME"
+
+jobs:
+  build:
+    name: Build Solution
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@main
+
+    - name: Install .NET SDK 8.0
+      uses: actions/setup-dotnet@main
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore Dependencies
+      run: dotnet restore HookPlugin.sln
+
+    - name: Build Solution
+      run: |
+        dotnet build HookPlugin.sln --configuration Release
+
+    - name: Create ZIP file
+      run: |
+        cd HookPlugin
+        mkdir -p HookPlugin/addons/counterstrikesharp/plugins/HookPlugin
+        cp -r cfg HookPlugin/
+        cp -r bin/Release/net8.0/* HookPlugin/addons/counterstrikesharp/plugins/HookPlugin
+        zip -r HookPlugin-${{ github.event.inputs.version }}.zip HookPlugin
+  
+    - name: Upload Release
+      uses: actions/upload-artifact@main
+      with:
+        name: release
+        path: HookPlugin
+
+    - name: List contents of Release directory
+      run: ls -la HookPlugin
+
+    - name: Create Release
+      uses: actions/create-release@main
+      id: create_release
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: HookPlugin ${{ github.event.inputs.version }}
+        body: ${{ github.event.inputs.description }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@main
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: HookPlugin/HookPlugin-${{ github.event.inputs.version }}.zip
+        asset_name: HookPlugin-${{ github.event.inputs.version }}.zip
+        asset_content_type: application/zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
