@@ -36,8 +36,9 @@ jobs:
         cd HookPlugin
         mkdir -p addons/counterstrikesharp/plugins/HookPlugin
         cp -r bin/Release/net8.0/* addons/counterstrikesharp/plugins/HookPlugin
-        cd addons
-        zip -r ../HookPlugin-${{ github.event.inputs.version }}.zip counterstrikesharp/plugins/HookPlugin
+        cd addons/counterstrikesharp/plugins
+        zip -r ../../../HookPlugin-${{ github.event.inputs.version }}.zip HookPlugin
+
 
 
     - name: Upload Release
