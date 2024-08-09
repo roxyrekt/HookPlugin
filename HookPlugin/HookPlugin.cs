@@ -13,7 +13,7 @@ namespace HookPlugin
 	public class HookPlugin : BasePlugin, IPluginConfig<HookPluginConfig>
 	{
 		public override string ModuleName => "HookPlugin";
-		public override string ModuleVersion => "1.0.2";
+		public override string ModuleVersion => "1.0.3";
 		public override string ModuleAuthor => "Roxy";
 
 
