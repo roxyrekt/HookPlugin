@@ -88,14 +88,6 @@ namespace HookPlugin
 					if (@event == null)
 						return HookResult.Continue;
 
-					// HER YENI ROUND ZATEN BEAMLER SIFIRLAINYOR BU YUZDEN GEREKSIZ
-					//PlayersGrapples
-					//	.ToList()
-					//	.ForEach(x =>
-					//	{
-					//		x.Value.Remove();
-					//	});
-
 					PlayersGrapples?.Clear();
 
 					if (Config.HookSettings.HookActiveResetOnRoundStart)
@@ -123,10 +115,20 @@ namespace HookPlugin
 				.ToList()
 				.ForEach(x =>
 				{
-					x.Value.Remove();
+					if (x.Value != null)
+					{
+						try
+						{
+							x.Value.Remove();
+						}
+						catch (Exception e)
+						{
+							Console.WriteLine($"Hook, beam remove error: {e.Message}");
+						}
+					}
 				});
 
-			PlayersGrapples.Clear();
+			PlayersGrapples?.Clear();
 
 			RemoveListener<Listeners.OnTick>(OnTick);
 			base.Unload(hotReload);
