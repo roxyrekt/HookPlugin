@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Install .NET SDK 8.0
-      uses: actions/setup-dotnet@v6
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
@@ -28,14 +28,15 @@ jobs:
       run: dotnet restore HookPlugin.sln
 
     - name: Build Solution
-      run: dotnet build HookPlugin.sln --configuration Release
+      run: |
+        dotnet build HookPlugin.sln --configuration Release
 
     - name: Create ZIP file
       run: |
         cd HookPlugin
         mkdir -p addons/counterstrikesharp/plugins/HookPlugin
         cp -r bin/Release/net8.0/* addons/counterstrikesharp/plugins/HookPlugin
-        zip -r HookPlugin-${{ github.event.inputs.version }}.zip addons
+        zip -r HookPlugin-${{ github.event.inputs.version }}.zip .
 
     - name: Upload Release
       uses: actions/upload-artifact@v3
