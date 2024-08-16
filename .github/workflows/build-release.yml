@@ -55,7 +55,7 @@ jobs:
       id: create_release
       with:
         tag_name: ${{ github.event.inputs.version }}
-        release_name: HookPlugin ${{ github.event.inputs.version }}
+        release_name: ${{ github.event.inputs.version }}
         body: ${{ github.event.inputs.description }}
         draft: false
         prerelease: false
