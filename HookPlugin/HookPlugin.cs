@@ -23,7 +23,6 @@ namespace HookPlugin
 		public void OnConfigParsed(HookPluginConfig config)
 		{
 			config.Prefix = StringExtensions.ReplaceColorTags(config.Prefix);
-
 			Config = config;
 		}
 
